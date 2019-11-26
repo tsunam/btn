@@ -12,99 +12,90 @@ class btn():
         self.server = Server(BASEURI)
         self.apikey = apikey
 
+    def call_api(self, endpoint, *args, **kwargs):
+        '''
+        Abstract the api out to remove duplication in individual functions
+        '''
+        try:
+            return getattr(self.server, endpoint)(self.apikey, *args, **kwargs)
+        except ProtocolError:
+            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
     def get_user(self):
         """
         Gets the authenticated users information
         :returns: dictionary
         """
-        try:
-            return self.server.userInfo(self.apikey)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('userinfo')
 
     def get_changelog(self):
         """
         Gets the changelog for the api interface
         """
-        try:
-            return self.server.getChangelog(self.apikey)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('getChangelog')
 
     def get_news(self, id=None):
         """
         Get news information
         """
-        try:
-            if id:
-                return self.server.getNewsById(self.apikey, id)
 
-            return self.server.getNews(self.apikey)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+        if id:
+            return self.call_api('getNewsById', id)
+
+        return self.call_api('getNews')
 
     def get_blog(self, id=None):
         """
         Get blog items
         """
-        try:
-            if id:
-                return self.server.getBlogById(self.apikey, id)
 
-            return self.server.getBlog(self.apikey)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+        if id:
+            return self.call_api('getBlogById', id)
+
+        return self.call_api('getBlog')
 
     def get_tvnews(self, id=None):
         """
         Get last tvnews items
         """
-        try:
-            if id:
-                return self.server.getTVNewsById(self.apikey, id)
 
-            return self.server.getTVNews(self.apikey)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+        if id:
+            return self.call_api('getTVNewsById', id)
+
+        return self.call_api('getTVNews')
 
     def get_inbox(self, page=1, id=None):
         """
         Get recent inbox messages
         """
-        try:
-            if id:
-                return self.server.getInboxConversation(self.apikey, id)
 
-            return self.server.getInbox(self.apikey, page)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+        if id:
+            return self.call_api('getInboxConversation', id)
+
+        return self.call_api('getInbox', page)
 
     def send_inbox(self, id, body=None):
         """
         Send a message
         """
-        try:
-            return self.server.sendInboxConversation(self.apikey, id, body)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('sendInboxConversation', id, body)
 
     def get_schedule(self, sort='today'):
         """
         get the television schedule
         """
-        try:
-            return self.server.getSchedule(self.apikey, sort)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('getSchedule', sort)
 
     def get_newseries(self):
         """
         get the latest new series
         """
-        try:
-            return self.server.getNewSeries(self.apikey)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('getNewSeries')
 
     def filter_match(self, search):
         '''
@@ -155,11 +146,8 @@ class btn():
         :return: array
         '''
         self.search_handler(search)
-        try:
-            return self.server.getTorrents(self.apikey, search, results,
-                                           offset)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('getTorrents', search, results, offset)
 
     def get_torrentsurl(self, torrentid):
         '''
@@ -167,10 +155,8 @@ class btn():
         :torrentid: int number of torrent to get
         :return: string
         '''
-        try:
-            return self.server.getTorrentsUrl(self.apikey, torrentid)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('getTorrentsUrl', torrentid)
 
     def get_forumsindex(self, lastpost=1):
         '''
@@ -178,10 +164,8 @@ class btn():
         :lastpost: get last post ordering
         :return: array
         '''
-        try:
-            return self.server.getForumsIndex(self.apikey, lastpost)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('getForumsIndex', lastpost)
 
     def get_forumspage(self, forumid, pageid=1):
         '''
@@ -190,10 +174,8 @@ class btn():
         :pageid: what page from the forum you want
         :return: array
         '''
-        try:
-            return self.server.getForumsPage(self.apikey, forumid, pageid)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('getForumsPage', forumid, pageid)
 
     def get_torrentsbyid(self, ids):
         '''
@@ -201,20 +183,16 @@ class btn():
         :ids: int/list of torrent ids
         :return: list
         '''
-        try:
-            return self.server.getTorrentById(self.apikey, ids)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('getTorrentById', ids)
 
     def get_usersubscription(self):
         '''
         get the users subscriptions
         :returns: list of subscriptions
         '''
-        try:
-            return self.server.getUserSubscriptions(self.apikey)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('getUserSubscriptions')
 
     def get_usersnatchlist(self, results=10, offset=0):
         '''
@@ -223,16 +201,12 @@ class btn():
         :offset: id to start with
         :return: list of torrents grabbed
         '''
-        try:
-            return self.server.getUserSnatchlist(self.apikey, results, offset)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('getUserSnatchlist', results, offset)
 
     def get_userstats(self):
         '''
         get stats for users
         '''
-        try:
-            return self.server.getUserStats(self.apikey)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+
+        return self.call_api('getUserStats')
