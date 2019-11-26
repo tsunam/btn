@@ -18,8 +18,8 @@ class btn():
         '''
         try:
             return getattr(self.server, endpoint)(self.apikey, *args, **kwargs)
-        except ProtocolError:
-            raise ProtocolError("Exceeded the 150 calls per hour limit")
+        except ProtocolError as error:
+            raise ProtocolError(error.message)
 
     def get_user(self):
         """
