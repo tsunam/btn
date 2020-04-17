@@ -1,6 +1,11 @@
-import pytest
 from btn.btn import btn
-from .config import APIKEY
+
+import pytest
+try:
+    from .config import APIKEY
+except ImportError:
+    from os import getenv
+    APIKEY = getenv('APIKEY')
 
 
 class TestBtn:
