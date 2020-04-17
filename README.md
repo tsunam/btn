@@ -9,6 +9,10 @@ Implements the broadcasthe.net client in python. See https://apidocs.broadcasthe
     client = btn(apikey)
     client.get_user()
 
+
+# For forks
+Create a secret with name APIKEY and input an appropriate APIKEY you will use to test via github actions
+
 # Tests
 In tests dir setup a config.py with APIKEY = 'somekey'
 Then run tox
